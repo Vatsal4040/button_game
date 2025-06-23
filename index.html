@@ -125,14 +125,37 @@
       color: white;
       font-size: 0.8rem;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    #restart-btn {
-      background: #2196F3;
-      color: white;
+    #end-game-container {
       display: none;
-      margin-top: 20px;
+      flex-direction: column;
+      align-items: center;
     }
+
+    #share-container {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .share-btn {
+      background: #555;
+      color: white;
+    }
+
+    .difficulty-indicator {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .easy { color: #4CAF50; }
+    .medium { color: #FFC107; }
+    .hard { color: #f44336; }
 
     @media (max-width: 600px) {
       h1 { font-size: 2rem; }
@@ -147,51 +170,85 @@
   <h1>Would You Press the Button?</h1>
   <div id="progress"></div>
   <div id="question">Loading...</div>
-  <div class="btn-container">
+  
+  <div class="btn-container" id="game-buttons">
     <button class="btn yes-btn" onclick="choose(true)">YES</button>
     <button class="btn no-btn" onclick="choose(false)">NO</button>
   </div>
+  
   <div class="result-container" id="result"></div>
   <div id="history-container"></div>
-  <button id="restart-btn" class="btn" onclick="restartGame()">Play Again</button>
+  
+  <div id="end-game-container">
+    <div id="final-score"></div>
+    <div id="share-container">
+      <button class="btn share-btn" onclick="shareResults()">Share Results</button>
+      <button class="btn share-btn" onclick="exportToCSV()">Export to CSV</button>
+      <button class="btn" id="restart-btn" onclick="restartGame()">Play Again</button>
+    </div>
+  </div>
 
   <script>
     // Game configuration
     const QUESTIONS_PER_GAME = 10;
     const RESULT_DISPLAY_TIME = 1500;
 
-    // Questions database
+    // Difficulty levels
+    const DIFFICULTY = {
+      EASY: { minYes: 60, maxYes: 90, class: 'easy', label: 'Easy' },
+      MEDIUM: { minYes: 40, maxYes: 60, class: 'medium', label: 'Medium' },
+      HARD: { minYes: 10, maxYes: 40, class: 'hard', label: 'Hard' }
+    };
+
+    // Questions database with difficulty levels
     const allQuestions = [
-      { text: "You gain the ability to fly, but only while sneezing.", yes: 64, no: 36 },
-      { text: "You become invisible, but only at midnight.", yes: 72, no: 28 },
-      { text: "You cure all diseases, but nobody knows it was you.", yes: 91, no: 9 },
-      { text: "You get $1 million, but lose one cherished memory.", yes: 55, no: 45 },
-      { text: "You become famous, but can never be alone again.", yes: 43, no: 57 },
-      { text: "You can read minds, but can't talk ever again.", yes: 31, no: 69 },
-      { text: "You can teleport, but each time you lose a year of your life.", yes: 48, no: 52 },
-      { text: "You are loved by everyone, but you never find true love.", yes: 38, no: 62 },
-      { text: "You never get tired, but can't sleep ever again.", yes: 42, no: 58 },
-      { text: "You live forever, but see everyone else age.", yes: 35, no: 65 },
-      { text: "You stop all wars, but no more music exists.", yes: 50, no: 50 },
-      { text: "You get the perfect body, but lose your voice.", yes: 46, no: 54 },
-      { text: "You win every game, but lose all your friends.", yes: 20, no: 80 },
-      { text: "You save the planet, but nobody remembers you.", yes: 88, no: 12 },
-      { text: "You can visit any time in history, but can't return.", yes: 34, no: 66 },
-      { text: "You gain genius intelligence, but lose creativity.", yes: 60, no: 40 },
-      { text: "You eat anything without gaining weight, but never enjoy food.", yes: 52, no: 48 },
-      { text: "You control weather, but one city suffers daily.", yes: 41, no: 59 },
-      { text: "You eliminate taxes, but work every weekend forever.", yes: 39, no: 61 },
-      { text: "You teleport anywhere instantly, but only naked.", yes: 45, no: 55 },
-      { text: "You can speak all languages, but forget your own.", yes: 47, no: 53 },
-      { text: "You can be invisible at will, but glow while sleeping.", yes: 56, no: 44 },
-      { text: "You stop global warming, but internet is banned.", yes: 58, no: 42 },
-      { text: "You become rich, but never see the sky again.", yes: 27, no: 73 },
-      { text: "You master any skill instantly, but lose one each week.", yes: 53, no: 47 },
-      { text: "You get $10M, but forget your best friend's name.", yes: 35, no: 65 },
-      { text: "You bring peace to the world, but can't ever laugh.", yes: 70, no: 30 },
-      { text: "You know the future, but can't change it.", yes: 62, no: 38 },
-      { text: "You end poverty, but live in it forever.", yes: 74, no: 26 },
-      { text: "You become a legend, but forgotten in 1 year.", yes: 49, no: 51 }
+      // Easy questions (clear majority)
+      { text: "You gain the ability to fly, but only while sneezing.", yes: 64, no: 36, difficulty: DIFFICULTY.EASY },
+      { text: "You become invisible, but only at midnight.", yes: 72, no: 28, difficulty: DIFFICULTY.EASY },
+      { text: "You cure all diseases, but nobody knows it was you.", yes: 91, no: 9, difficulty: DIFFICULTY.EASY },
+      { text: "You save the planet, but nobody remembers you.", yes: 88, no: 12, difficulty: DIFFICULTY.EASY },
+      { text: "You bring peace to the world, but can't ever laugh.", yes: 70, no: 30, difficulty: DIFFICULTY.EASY },
+      { text: "You end poverty, but live in it forever.", yes: 74, no: 26, difficulty: DIFFICULTY.EASY },
+      
+      // Medium questions (more balanced)
+      { text: "You get $1 million, but lose one cherished memory.", yes: 55, no: 45, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You can teleport, but each time you lose a year of your life.", yes: 48, no: 52, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You stop all wars, but no more music exists.", yes: 50, no: 50, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You eat anything without gaining weight, but never enjoy food.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You teleport anywhere instantly, but only naked.", yes: 45, no: 55, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You can be invisible at will, but glow while sleeping.", yes: 56, no: 44, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You stop global warming, but internet is banned.", yes: 58, no: 42, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You master any skill instantly, but lose one each week.", yes: 53, no: 47, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You become a legend, but forgotten in 1 year.", yes: 49, no: 51, difficulty: DIFFICULTY.MEDIUM },
+      
+      // Hard questions (unpopular choices)
+      { text: "You become famous, but can never be alone again.", yes: 43, no: 57, difficulty: DIFFICULTY.HARD },
+      { text: "You can read minds, but can't talk ever again.", yes: 31, no: 69, difficulty: DIFFICULTY.HARD },
+      { text: "You are loved by everyone, but you never find true love.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD },
+      { text: "You never get tired, but can't sleep ever again.", yes: 42, no: 58, difficulty: DIFFICULTY.HARD },
+      { text: "You live forever, but see everyone else age.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD },
+      { text: "You win every game, but lose all your friends.", yes: 20, no: 80, difficulty: DIFFICULTY.HARD },
+      { text: "You get the perfect body, but lose your voice.", yes: 46, no: 54, difficulty: DIFFICULTY.HARD },
+      { text: "You can visit any time in history, but can't return.", yes: 34, no: 66, difficulty: DIFFICULTY.HARD },
+      { text: "You gain genius intelligence, but lose creativity.", yes: 60, no: 40, difficulty: DIFFICULTY.HARD },
+      { text: "You control weather, but one city suffers daily.", yes: 41, no: 59, difficulty: DIFFICULTY.HARD },
+      { text: "You eliminate taxes, but work every weekend forever.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD },
+      { text: "You can speak all languages, but forget your own.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD },
+      { text: "You become rich, but never see the sky again.", yes: 27, no: 73, difficulty: DIFFICULTY.HARD },
+      { text: "You get $10M, but forget your best friend's name.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD },
+      { text: "You know the future, but can't change it.", yes: 62, no: 38, difficulty: DIFFICULTY.HARD },
+      
+      // New challenging questions
+      { text: "You can undo any mistake in your life, but lose all memories of the original events.", yes: 45, no: 55, difficulty: DIFFICULTY.HARD },
+      { text: "You can communicate with animals, but they constantly criticize your life choices.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD },
+      { text: "You become immortal, but must spend eternity in the last place you died.", yes: 28, no: 72, difficulty: DIFFICULTY.HARD },
+      { text: "You can read any book instantly by touching it, but forget it after 24 hours.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM },
+      { text: "You get perfect health, but must eat the same meal every day.", yes: 44, no: 56, difficulty: DIFFICULTY.HARD },
+      { text: "You can see 24 hours into the future, but age twice as fast.", yes: 33, no: 67, difficulty: DIFFICULTY.HARD },
+      { text: "You become the smartest person alive, but everyone thinks you're stupid.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD },
+      { text: "You can make anyone fall in love with you, but can't experience love yourself.", yes: 25, no: 75, difficulty: DIFFICULTY.HARD },
+      { text: "You get $100 million, but a random person dies each time you spend $1,000.", yes: 18, no: 82, difficulty: DIFFICULTY.HARD },
+      { text: "You can pause time for up to 8 hours per day, but you age during paused time.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD }
     ];
 
     // Game state
@@ -219,15 +276,21 @@
         score: 0,
         history: []
       };
-      document.getElementById('restart-btn').style.display = 'none';
+      document.getElementById('game-buttons').style.display = 'flex';
+      document.getElementById('end-game-container').style.display = 'none';
       document.getElementById('history-container').innerHTML = '';
       showQuestion();
     }
 
     function showQuestion() {
       const { currentIndex, questions } = currentGame;
+      const question = questions[currentIndex];
+      
       document.getElementById('result').innerHTML = '';
-      document.getElementById('question').textContent = questions[currentIndex].text;
+      document.getElementById('question').innerHTML = `
+        ${question.text}
+        <div class="difficulty-indicator ${question.difficulty.class}">Difficulty: ${question.difficulty.label}</div>
+      `;
       document.getElementById('progress').textContent = `Question ${currentIndex + 1} of ${QUESTIONS_PER_GAME}`;
     }
 
@@ -239,7 +302,7 @@
         const dot = document.createElement('div');
         dot.className = `history-dot ${item.yes ? 'yes-dot' : 'no-dot'}`;
         dot.textContent = `${item.percent}%`;
-        dot.title = `Q${index + 1}: ${item.percent}% ${item.yes ? 'YES' : 'NO'}`;
+        dot.title = `Q${index + 1}: ${item.percent}% ${item.yes ? 'YES' : 'NO'}\n"${item.text}"`;
         historyContainer.appendChild(dot);
       });
     }
@@ -257,7 +320,8 @@
       // Add to history
       currentGame.history.push({
         yes: yes,
-        percent: percent
+        percent: percent,
+        text: question.text
       });
 
       // Show current result
@@ -282,13 +346,67 @@
     }
 
     function endGame() {
-      document.getElementById('question').innerHTML = `
-        Game Over!<br>
-        You agreed with the majority <strong>${currentGame.score}</strong> out of ${QUESTIONS_PER_GAME} times.
-      `;
+      document.getElementById('game-buttons').style.display = 'none';
+      document.getElementById('question').innerHTML = 'Game Over!';
       document.getElementById('progress').textContent = '';
       document.getElementById('result').innerHTML = '';
-      document.getElementById('restart-btn').style.display = 'block';
+      
+      const scorePercentage = Math.round((currentGame.score / QUESTIONS_PER_GAME) * 100);
+      document.getElementById('final-score').innerHTML = `
+        You agreed with the majority <strong>${currentGame.score}</strong> out of ${QUESTIONS_PER_GAME} times.<br>
+        That's <strong>${scorePercentage}%</strong> agreement with popular opinion!
+      `;
+      
+      document.getElementById('end-game-container').style.display = 'flex';
+    }
+
+    function shareResults() {
+      let shareText = `I played "Would You Press the Button?" and agreed with the majority ${currentGame.score} out of ${QUESTIONS_PER_GAME} times!\n\n`;
+      
+      currentGame.history.forEach((item, index) => {
+        shareText += `Q${index + 1}: ${item.percent}% ${item.yes ? 'YES' : 'NO'} - "${item.text}"\n`;
+      });
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'My "Would You Press the Button?" Results',
+          text: shareText
+        }).catch(err => {
+          console.log('Error sharing:', err);
+          copyToClipboard(shareText);
+        });
+      } else {
+        copyToClipboard(shareText);
+      }
+    }
+
+    function exportToCSV() {
+      let csvContent = "Question Number,Question,Your Answer,Percentage,Agreed With Majority\n";
+      
+      currentGame.history.forEach((item, index) => {
+        const agreed = ((item.yes && item.percent >= 50) || (!item.yes && item.percent < 50)) ? "Yes" : "No";
+        csvContent += `${index + 1},"${item.text}","${item.yes ? 'YES' : 'NO'}","${item.percent}%","${agreed}"\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'button_game_results.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('Results copied to clipboard!');
     }
 
     function restartGame() {
