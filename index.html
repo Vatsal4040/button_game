@@ -2,266 +2,356 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Would You Press the Button?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Would You Press the Button? - Full Questions with Emojis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500;700&family=Fjalla+One&display=swap" rel="stylesheet" />
   <style>
     body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Arial', sans-serif;
-      background-color: #111;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      margin: 0; padding: 20px;
+      font-family: 'Dosis', 'Fjalla One', Arial, sans-serif;
+      background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+      background-size: 600% 600%;
+      animation: gradientShift 15s ease infinite;
+      color: #f0f0f0;
       min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
       text-align: center;
+      user-select: none;
     }
-
+    @keyframes gradientShift {
+      0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+    }
     h1 {
-      font-size: 2.5rem;
-      color: #ff4444;
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 2.8rem;
+      color: #ff6e7f;
       margin-bottom: 10px;
+      text-shadow: 2px 2px 8px #ff6e7f88;
+      user-select: text;
     }
-
     #progress {
-      margin-bottom: 20px;
-      color: #aaa;
+      position: relative;
+      margin: 15px 0 35px;
+      width: 80%;
+      max-width: 600px;
+      height: 14px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 7px;
+      overflow: hidden;
+      box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+      user-select: none;
     }
-
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff6e7f, #bfe9ff);
+      border-radius: 7px 0 0 7px;
+      transition: width 0.6s ease;
+    }
     #question {
-      font-size: 1.5rem;
-      margin: 30px 20px;
-      min-height: 72px;
-      display: flex;
-      align-items: center;
+      font-size: 1.4rem;
+      max-width: 650px;
+      margin: 15px 20px 20px;
+      font-weight: 600;
+      min-height: 90px;
+      user-select: text;
+      position: relative;
+      animation: fadeIn 0.8s ease-in;
     }
-
+    .emoji-row {
+      margin: 16px 0 8px 0;
+    }
+    .emoji-row span {
+      font-size: 2.8rem;
+      margin: 0 10px;
+    }
+    .difficulty-indicator {
+      font-size: 0.9rem;
+      margin-top: 10px;
+      font-weight: 700;
+      opacity: 0.85;
+      text-shadow: 0 0 6px #0008;
+      user-select: none;
+    }
+    .easy { color: #4CAF50; }
+    .medium { color: #FFC107; }
+    .hard { color: #f44336; }
     .btn-container {
       display: flex;
-      gap: 20px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 36px;
       justify-content: center;
+      flex-wrap: wrap;
     }
-
     .btn {
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s;
-      font-weight: bold;
-      min-width: 120px;
+      padding: 18px 44px;
+      border-radius: 50px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      font-family: 'Dosis', sans-serif;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: all 0.35s ease;
+      min-width: 130px;
     }
-
-    .btn:hover {
-      transform: scale(1.05);
+    .yes-btn {
+      background: linear-gradient(135deg, #3ddc97 20%, #24b494 80%);
+      box-shadow: 0 0 15px #24b494cc;
     }
-
-    .btn:active {
-      transform: scale(0.95);
+    .yes-btn:hover {
+      background: linear-gradient(135deg, #6de1b0 20%, #3ddc97 80%);
+      box-shadow: 0 0 25px #3ddc97cc;
+      transform: scale(1.08);
     }
-
-    .yes-btn { 
-      background: #4CAF50; 
-      color: white; 
+    .no-btn {
+      background: linear-gradient(135deg, #f25c68 20%, #e84558 80%);
+      box-shadow: 0 0 15px #e84558cc;
     }
-    .no-btn { 
-      background: #f44336; 
-      color: white; 
+    .no-btn:hover {
+      background: linear-gradient(135deg, #ff7a89 20%, #f25c68 80%);
+      box-shadow: 0 0 25px #f25c68cc;
+      transform: scale(1.08);
     }
-
     .result-container {
       min-height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
-
     .dot {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin: 10px;
-      padding: 15px;
+      margin: 8px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      color: white;
       font-size: 1.1rem;
-      font-weight: bold;
-      width: 60px;
-      height: 60px;
+      font-weight: 700;
+      color: white;
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
       animation: popIn 0.5s;
+      cursor: default;
+      user-select: none;
     }
-
-    @keyframes popIn {
-      0% { transform: scale(0); }
-      80% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+    .yes-dot { background-color: #3ddc97; }
+    .no-dot { background-color: #f25c68; }
+    #mascot-container {
+      margin: 18px 0 10px 0;
+      min-height: 50px;
     }
-
-    .yes-dot { background-color: #4CAF50; }
-    .no-dot { background-color: #f44336; }
-
+    #mascot-emoji {
+      font-size: 3.6rem;
+      transition: transform 0.3s;
+      display: inline-block;
+      animation: fadeIn 0.8s;
+    }
     #history-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      margin-top: 20px;
       max-width: 800px;
+      margin-top: 10px;
+      user-select: none;
     }
-
     .history-dot {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       color: white;
-      font-size: 0.8rem;
+      font-size: 0.84rem;
       font-weight: bold;
       cursor: pointer;
+      margin: 2px 6px;
+      filter: drop-shadow(0 2px 2px #000A);
+      transition: transform 0.23s;
     }
-
+    .history-dot:hover { transform: scale(1.2); z-index:2; }
     #end-game-container {
       display: none;
       flex-direction: column;
       align-items: center;
+      margin-top: 18px;
     }
-
+    #final-score {
+      font-size: 1.1rem;
+      margin: 0 0 18px 0;
+      font-weight: 700;
+    }
     #share-container {
-      margin-top: 20px;
+      margin-top: 16px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .share-btn {
       background: #555;
       color: white;
+      font-family: 'Dosis', sans-serif;
+      font-weight: 600;
+      padding: 12px 30px;
+      border-radius: 24px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 12px #0008;
+      transition: all 0.3s ease;
+      user-select: none;
+      min-width: 130px;
     }
-
-    .difficulty-indicator {
-      font-size: 0.8rem;
-      color: #aaa;
-      margin-top: 5px;
+    .share-btn:hover {
+      background: #777;
+      box-shadow: 0 0 18px #7d7d7ddd;
+      transform: scale(1.07);
     }
-
-    .easy { color: #4CAF50; }
-    .medium { color: #FFC107; }
-    .hard { color: #f44336; }
-
-    @media (max-width: 600px) {
-      h1 { font-size: 2rem; }
-      #question { font-size: 1.2rem; }
-      .btn { padding: 12px 24px; font-size: 1rem; }
-      .dot { width: 50px; height: 50px; font-size: 1rem; }
-      .history-dot { width: 30px; height: 30px; font-size: 0.7rem; }
+    #restart-btn {
+      background: linear-gradient(135deg, #4a65ff, #728cff);
+      box-shadow: 0 0 18px #728cff99;
+      color: white;
+      font-family: 'Dosis', sans-serif;
+      font-weight: 600;
+      padding: 12px 35px;
+      border-radius: 28px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 130px;
+      margin-top: 8px;
+      user-select: none;
+    }
+    #restart-btn:hover {
+      background: linear-gradient(135deg, #729cff, #4a65ff);
+      box-shadow: 0 0 26px #4a65ffcc;
+      transform: scale(1.07);
+    }
+    #restart-btn:active {
+      transform: scale(0.95);
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    button:focus-visible {
+      outline: 3px solid #ff6e7f;
+      outline-offset: 2px;
+    }
+    @media(max-width:650px){
+      h1{font-size:2.1rem;}
+      .btn{font-size:1.1rem; padding:12px 20px;}
+      #mascot-emoji{font-size:2.2rem;}
+      #question{font-size:1.12rem; min-height:80px;}
     }
   </style>
 </head>
 <body>
   <h1>Would You Press the Button?</h1>
-  <div id="progress"></div>
+
+  <div id="progress" aria-label="Game progress bar">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="mascot-container">
+    <span id="mascot-emoji">😐</span>
+  </div>
+
   <div id="question">Loading...</div>
-  
+
   <div class="btn-container" id="game-buttons">
     <button class="btn yes-btn" onclick="choose(true)">YES</button>
     <button class="btn no-btn" onclick="choose(false)">NO</button>
   </div>
-  
+
   <div class="result-container" id="result"></div>
   <div id="history-container"></div>
-  
   <div id="end-game-container">
     <div id="final-score"></div>
     <div id="share-container">
-      <button class="btn share-btn" onclick="shareResults()">Share Results</button>
-      <button class="btn share-btn" onclick="exportToCSV()">Export to CSV</button>
+      <button class="share-btn" onclick="shareResults()">Share Results</button>
+      <button class="share-btn" onclick="exportToCSV()">Export to CSV</button>
       <button class="btn" id="restart-btn" onclick="restartGame()">Play Again</button>
     </div>
   </div>
 
   <script>
-    // Game configuration
     const QUESTIONS_PER_GAME = 10;
-    const RESULT_DISPLAY_TIME = 1500;
+    const RESULT_DISPLAY_TIME = 1300;
+    const mascotEmojis = { happy: "😃", surprised: "😯", neutral: "😐" };
 
-    // Difficulty levels
     const DIFFICULTY = {
       EASY: { minYes: 60, maxYes: 90, class: 'easy', label: 'Easy' },
       MEDIUM: { minYes: 40, maxYes: 60, class: 'medium', label: 'Medium' },
       HARD: { minYes: 10, maxYes: 40, class: 'hard', label: 'Hard' }
     };
 
-    // Questions database with difficulty levels
+    // Full questions with emojis
     const allQuestions = [
-      // Easy questions (clear majority)
-      { text: "You gain the ability to fly, but only while sneezing.", yes: 64, no: 36, difficulty: DIFFICULTY.EASY },
-      { text: "You become invisible, but only at midnight.", yes: 72, no: 28, difficulty: DIFFICULTY.EASY },
-      { text: "You cure all diseases, but nobody knows it was you.", yes: 91, no: 9, difficulty: DIFFICULTY.EASY },
-      { text: "You save the planet, but nobody remembers you.", yes: 88, no: 12, difficulty: DIFFICULTY.EASY },
-      { text: "You bring peace to the world, but can't ever laugh.", yes: 70, no: 30, difficulty: DIFFICULTY.EASY },
-      { text: "You end poverty, but live in it forever.", yes: 74, no: 26, difficulty: DIFFICULTY.EASY },
-      
-      // Medium questions (more balanced)
-      { text: "You get $1 million, but lose one cherished memory.", yes: 55, no: 45, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You can teleport, but each time you lose a year of your life.", yes: 48, no: 52, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You stop all wars, but no more music exists.", yes: 50, no: 50, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You eat anything without gaining weight, but never enjoy food.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You teleport anywhere instantly, but only naked.", yes: 45, no: 55, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You can be invisible at will, but glow while sleeping.", yes: 56, no: 44, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You stop global warming, but internet is banned.", yes: 58, no: 42, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You master any skill instantly, but lose one each week.", yes: 53, no: 47, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You become a legend, but forgotten in 1 year.", yes: 49, no: 51, difficulty: DIFFICULTY.MEDIUM },
-      
-      // Hard questions (unpopular choices)
-      { text: "You become famous, but can never be alone again.", yes: 43, no: 57, difficulty: DIFFICULTY.HARD },
-      { text: "You can read minds, but can't talk ever again.", yes: 31, no: 69, difficulty: DIFFICULTY.HARD },
-      { text: "You are loved by everyone, but you never find true love.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD },
-      { text: "You never get tired, but can't sleep ever again.", yes: 42, no: 58, difficulty: DIFFICULTY.HARD },
-      { text: "You live forever, but see everyone else age.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD },
-      { text: "You win every game, but lose all your friends.", yes: 20, no: 80, difficulty: DIFFICULTY.HARD },
-      { text: "You get the perfect body, but lose your voice.", yes: 46, no: 54, difficulty: DIFFICULTY.HARD },
-      { text: "You can visit any time in history, but can't return.", yes: 34, no: 66, difficulty: DIFFICULTY.HARD },
-      { text: "You gain genius intelligence, but lose creativity.", yes: 60, no: 40, difficulty: DIFFICULTY.HARD },
-      { text: "You control weather, but one city suffers daily.", yes: 41, no: 59, difficulty: DIFFICULTY.HARD },
-      { text: "You eliminate taxes, but work every weekend forever.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD },
-      { text: "You can speak all languages, but forget your own.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD },
-      { text: "You become rich, but never see the sky again.", yes: 27, no: 73, difficulty: DIFFICULTY.HARD },
-      { text: "You get $10M, but forget your best friend's name.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD },
-      { text: "You know the future, but can't change it.", yes: 62, no: 38, difficulty: DIFFICULTY.HARD },
-      
-      // New challenging questions
-      { text: "You can undo any mistake in your life, but lose all memories of the original events.", yes: 45, no: 55, difficulty: DIFFICULTY.HARD },
-      { text: "You can communicate with animals, but they constantly criticize your life choices.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD },
-      { text: "You become immortal, but must spend eternity in the last place you died.", yes: 28, no: 72, difficulty: DIFFICULTY.HARD },
-      { text: "You can read any book instantly by touching it, but forget it after 24 hours.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM },
-      { text: "You get perfect health, but must eat the same meal every day.", yes: 44, no: 56, difficulty: DIFFICULTY.HARD },
-      { text: "You can see 24 hours into the future, but age twice as fast.", yes: 33, no: 67, difficulty: DIFFICULTY.HARD },
-      { text: "You become the smartest person alive, but everyone thinks you're stupid.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD },
-      { text: "You can make anyone fall in love with you, but can't experience love yourself.", yes: 25, no: 75, difficulty: DIFFICULTY.HARD },
-      { text: "You get $100 million, but a random person dies each time you spend $1,000.", yes: 18, no: 82, difficulty: DIFFICULTY.HARD },
-      { text: "You can pause time for up to 8 hours per day, but you age during paused time.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD }
+      // Easy
+      { text: "You gain the ability to fly, but only while sneezing.", yes: 64, no: 36, difficulty: DIFFICULTY.EASY, emojis: ["🐦","🤧"] },
+      { text: "You become invisible, but only at midnight.", yes: 72, no: 28, difficulty: DIFFICULTY.EASY, emojis: ["👤","🌙"] },
+      { text: "You cure all diseases, but nobody knows it was you.", yes: 91, no: 9, difficulty: DIFFICULTY.EASY, emojis: ["🩺","🙅"] },
+      { text: "You save the planet, but nobody remembers you.", yes: 88, no: 12, difficulty: DIFFICULTY.EASY, emojis: ["🌎","🙈"] },
+      { text: "You bring peace to the world, but can't ever laugh.", yes: 70, no: 30, difficulty: DIFFICULTY.EASY, emojis: ["✌️","😂"] },
+      { text: "You end poverty, but live in it forever.", yes: 74, no: 26, difficulty: DIFFICULTY.EASY, emojis: ["💰","🏚️"] },
+
+      // Medium
+      { text: "You get $1 million, but lose one cherished memory.", yes: 55, no: 45, difficulty: DIFFICULTY.MEDIUM, emojis: ["💵","🧠"] },
+      { text: "You can teleport, but each time you lose a year of your life.", yes: 48, no: 52, difficulty: DIFFICULTY.MEDIUM, emojis: ["🌀","⏳"] },
+      { text: "You stop all wars, but no more music exists.", yes: 50, no: 50, difficulty: DIFFICULTY.MEDIUM, emojis: ["✌️","🎵","🚫"] },
+      { text: "You eat anything without gaining weight, but never enjoy food.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM, emojis: ["🍔","😐"] },
+      { text: "You teleport anywhere instantly, but only naked.", yes: 45, no: 55, difficulty: DIFFICULTY.MEDIUM, emojis: ["🌀","🧍‍♂️🚪"] },
+      { text: "You can be invisible at will, but glow while sleeping.", yes: 56, no: 44, difficulty: DIFFICULTY.MEDIUM, emojis: ["👻","💡","😴"] },
+      { text: "You stop global warming, but internet is banned.", yes: 58, no: 42, difficulty: DIFFICULTY.MEDIUM, emojis: ["🌡️","🌍","📵"] },
+      { text: "You master any skill instantly, but lose one each week.", yes: 53, no: 47, difficulty: DIFFICULTY.MEDIUM, emojis: ["📚","⌛"] },
+      { text: "You become a legend, but forgotten in 1 year.", yes: 49, no: 51, difficulty: DIFFICULTY.MEDIUM, emojis: ["🌟","⌛"] },
+      { text: "You can read any book instantly by touching it, but forget it after 24 hours.", yes: 52, no: 48, difficulty: DIFFICULTY.MEDIUM, emojis: ["📖","⏰"] },
+
+      // Hard
+      { text: "You become famous, but can never be alone again.", yes: 43, no: 57, difficulty: DIFFICULTY.HARD, emojis: ["🌟","👥"] },
+      { text: "You can read minds, but can't talk ever again.", yes: 31, no: 69, difficulty: DIFFICULTY.HARD, emojis: ["💭","🤫"] },
+      { text: "You are loved by everyone, but you never find true love.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD, emojis: ["❤️","🥀"] },
+      { text: "You never get tired, but can't sleep ever again.", yes: 42, no: 58, difficulty: DIFFICULTY.HARD, emojis: ["💪","😴","🚫"] },
+      { text: "You live forever, but see everyone else age.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD, emojis: ["♾️","👵"] },
+      { text: "You win every game, but lose all your friends.", yes: 20, no: 80, difficulty: DIFFICULTY.HARD, emojis: ["🏆","👬","🚫"] },
+      { text: "You get the perfect body, but lose your voice.", yes: 46, no: 54, difficulty: DIFFICULTY.HARD, emojis: ["💪","🤐"] },
+      { text: "You can visit any time in history, but can't return.", yes: 34, no: 66, difficulty: DIFFICULTY.HARD, emojis: ["⏳","🧳"] },
+      { text: "You gain genius intelligence, but lose creativity.", yes: 60, no: 40, difficulty: DIFFICULTY.HARD, emojis: ["🧠","🎨","🚫"] },
+      { text: "You control weather, but one city suffers daily.", yes: 41, no: 59, difficulty: DIFFICULTY.HARD, emojis: ["🌦️","🏙️","⚡"] },
+      { text: "You eliminate taxes, but work every weekend forever.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD, emojis: ["💸","🛠️","📅"] },
+      { text: "You can speak all languages, but forget your own.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD, emojis: ["🗣️","❓"] },
+      { text: "You become rich, but never see the sky again.", yes: 27, no: 73, difficulty: DIFFICULTY.HARD, emojis: ["💰","🌌","🚫"] },
+      { text: "You get $10M, but forget your best friend's name.", yes: 35, no: 65, difficulty: DIFFICULTY.HARD, emojis: ["💰","😭"] },
+      { text: "You know the future, but can't change it.", yes: 62, no: 38, difficulty: DIFFICULTY.HARD, emojis: ["🔮","⛔"] },
+      { text: "You can undo any mistake in your life, but lose all memories of the original events.", yes: 45, no: 55, difficulty: DIFFICULTY.HARD, emojis: ["↩️","🧠"] },
+      { text: "You can communicate with animals, but they constantly criticize your life choices.", yes: 38, no: 62, difficulty: DIFFICULTY.HARD, emojis: ["🦜","🙄"] },
+      { text: "You become immortal, but must spend eternity in the last place you died.", yes: 28, no: 72, difficulty: DIFFICULTY.HARD, emojis: ["♾️","💀"] },
+      { text: "You get perfect health, but must eat the same meal every day.", yes: 44, no: 56, difficulty: DIFFICULTY.HARD, emojis: ["💪","🍽️"] },
+      { text: "You can see 24 hours into the future, but age twice as fast.", yes: 33, no: 67, difficulty: DIFFICULTY.HARD, emojis: ["👁️","⏩","⚰️"] },
+      { text: "You become the smartest person alive, but everyone thinks you're stupid.", yes: 39, no: 61, difficulty: DIFFICULTY.HARD, emojis: ["🧠","🤪"] },
+      { text: "You can make anyone fall in love with you, but can't experience love yourself.", yes: 25, no: 75, difficulty: DIFFICULTY.HARD, emojis: ["❤️","😢"] },
+      { text: "You get $100 million, but a random person dies each time you spend $1,000.", yes: 18, no: 82, difficulty: DIFFICULTY.HARD, emojis: ["💰","💀"] },
+      { text: "You can pause time for up to 8 hours per day, but you age during paused time.", yes: 47, no: 53, difficulty: DIFFICULTY.HARD, emojis: ["⏸️","🕰️","🧓"] }
     ];
 
-    // Game state
-    let currentGame = {
-      questions: [],
-      currentIndex: 0,
-      score: 0,
-      history: []
-    };
+    let currentGame = { questions: [], currentIndex: 0, score: 0, history: [] };
 
-    // Fisher-Yates shuffle algorithm
     function shuffleQuestions() {
-      const shuffled = [...allQuestions];
+      let shuffled = [...allQuestions];
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -284,97 +374,93 @@
 
     function showQuestion() {
       const { currentIndex, questions } = currentGame;
+      if (currentIndex >= questions.length) {
+        endGame();
+        return;
+      }
       const question = questions[currentIndex];
-      
-      document.getElementById('result').innerHTML = '';
+      let emojiHtml = "";
+      if (question.emojis) {
+        emojiHtml = `<div class="emoji-row">` + question.emojis.map(e => `<span>${e}</span>`).join('') + `</div>`;
+      }
       document.getElementById('question').innerHTML = `
-        ${question.text}
+        <div>${question.text}</div>
+        ${emojiHtml}
         <div class="difficulty-indicator ${question.difficulty.class}">Difficulty: ${question.difficulty.label}</div>
       `;
-      document.getElementById('progress').textContent = `Question ${currentIndex + 1} of ${QUESTIONS_PER_GAME}`;
+      updateProgress();
+      showMascot('neutral');
+    }
+
+    function updateProgress() {
+      let progressBar = document.getElementById('progress-bar');
+      let progressPercent = ((currentGame.currentIndex) / QUESTIONS_PER_GAME) * 100;
+      progressBar.style.width = progressPercent + '%';
+    }
+
+    function choose(isYes) {
+      const { currentIndex, questions } = currentGame;
+      const question = questions[currentIndex];
+      const percent = isYes ? question.yes : question.no;
+      if ((isYes && question.yes >= 50) || (!isYes && question.no >= 50)) {
+        currentGame.score++;
+      }
+      currentGame.history.push({
+        yes: isYes,
+        percent: percent,
+        text: question.text
+      });
+      showMascot(isYes ? "happy" : "surprised");
+      const dot = document.createElement('div');
+      dot.className = `dot ${isYes ? 'yes-dot' : 'no-dot'}`;
+      dot.textContent = `${percent}%`;
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('result').appendChild(dot);
+      updateHistory();
+      setTimeout(() => {
+        currentGame.currentIndex++;
+        document.getElementById('result').innerHTML = '';
+        showQuestion();
+      }, RESULT_DISPLAY_TIME);
+    }
+
+    function showMascot(reaction) {
+      const mascotSymbol = mascotEmojis[reaction] || mascotEmojis.neutral;
+      document.getElementById('mascot-emoji').textContent = mascotSymbol;
     }
 
     function updateHistory() {
       const historyContainer = document.getElementById('history-container');
       historyContainer.innerHTML = '';
-      
       currentGame.history.forEach((item, index) => {
         const dot = document.createElement('div');
         dot.className = `history-dot ${item.yes ? 'yes-dot' : 'no-dot'}`;
-        dot.textContent = `${item.percent}%`;
+        dot.textContent = index + 1;
         dot.title = `Q${index + 1}: ${item.percent}% ${item.yes ? 'YES' : 'NO'}\n"${item.text}"`;
         historyContainer.appendChild(dot);
       });
     }
 
-    function choose(yes) {
-      const { currentIndex, questions } = currentGame;
-      const question = questions[currentIndex];
-      const percent = yes ? question.yes : question.no;
-      
-      // Check if user agreed with majority
-      if ((yes && question.yes >= 50) || (!yes && question.no >= 50)) {
-        currentGame.score++;
-      }
-
-      // Add to history
-      currentGame.history.push({
-        yes: yes,
-        percent: percent,
-        text: question.text
-      });
-
-      // Show current result
-      const dot = document.createElement('div');
-      dot.className = `dot ${yes ? 'yes-dot' : 'no-dot'}`;
-      dot.textContent = `${percent}%`;
-      document.getElementById('result').innerHTML = '';
-      document.getElementById('result').appendChild(dot);
-
-      // Update history display
-      updateHistory();
-
-      // Move to next question or end game
-      setTimeout(() => {
-        currentGame.currentIndex++;
-        if (currentGame.currentIndex < questions.length) {
-          showQuestion();
-        } else {
-          endGame();
-        }
-      }, RESULT_DISPLAY_TIME);
-    }
-
     function endGame() {
       document.getElementById('game-buttons').style.display = 'none';
-      document.getElementById('question').innerHTML = 'Game Over!';
-      document.getElementById('progress').textContent = '';
+      document.getElementById('question').textContent = 'Game Over!';
       document.getElementById('result').innerHTML = '';
-      
       const scorePercentage = Math.round((currentGame.score / QUESTIONS_PER_GAME) * 100);
       document.getElementById('final-score').innerHTML = `
         You agreed with the majority <strong>${currentGame.score}</strong> out of ${QUESTIONS_PER_GAME} times.<br>
         That's <strong>${scorePercentage}%</strong> agreement with popular opinion!
       `;
-      
       document.getElementById('end-game-container').style.display = 'flex';
+      showMascot('neutral');
     }
 
     function shareResults() {
       let shareText = `I played "Would You Press the Button?" and agreed with the majority ${currentGame.score} out of ${QUESTIONS_PER_GAME} times!\n\n`;
-      
       currentGame.history.forEach((item, index) => {
         shareText += `Q${index + 1}: ${item.percent}% ${item.yes ? 'YES' : 'NO'} - "${item.text}"\n`;
       });
-      
       if (navigator.share) {
-        navigator.share({
-          title: 'My "Would You Press the Button?" Results',
-          text: shareText
-        }).catch(err => {
-          console.log('Error sharing:', err);
-          copyToClipboard(shareText);
-        });
+        navigator.share({ title: 'My Results', text: shareText }).catch(() => copyToClipboard(shareText));
       } else {
         copyToClipboard(shareText);
       }
@@ -382,18 +468,15 @@
 
     function exportToCSV() {
       let csvContent = "Question Number,Question,Your Answer,Percentage,Agreed With Majority\n";
-      
       currentGame.history.forEach((item, index) => {
         const agreed = ((item.yes && item.percent >= 50) || (!item.yes && item.percent < 50)) ? "Yes" : "No";
         csvContent += `${index + 1},"${item.text}","${item.yes ? 'YES' : 'NO'}","${item.percent}%","${agreed}"\n`;
       });
-      
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'button_game_results.csv');
-      link.style.visibility = 'hidden';
+      link.href = url;
+      link.download = 'button_game_results.csv';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -413,7 +496,6 @@
       initGame();
     }
 
-    // Initialize the game when page loads
     window.onload = initGame;
   </script>
 </body>
